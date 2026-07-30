@@ -1,5 +1,3 @@
-/* Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 *{
     margin:0;
@@ -14,7 +12,7 @@ body{
     text-align:center;
 }
 
-/* ================= HEADER ================= */
+
 
 #header{
     width:100%;
@@ -57,13 +55,18 @@ body{
     transition:.3s;
 }
 
+#header button a {
+    text-decoration: none;
+    color: white;
+}
+
 #header button:hover{
     background:#40d796;
     transform:translateY(-3px);
     box-shadow:0 10px 25px rgba(83,230,167,.35);
 }
 
-/* ================= CONTENT ================= */
+
 
 #content{
     width:80%;
@@ -85,7 +88,6 @@ body{
    
 }
 
-/* ================= CARDS ================= */
 
 .algo-card{
     height:100px;
@@ -115,32 +117,5 @@ body{
     box-shadow:0 12px 30px rgba(83,230,167,.15);
 }
 
-/* ================= RESPONSIVE ================= */
 
-@media(max-width:768px){
 
-    #header h2{
-        font-size:2.8rem;
-    }
-
-    #header p{
-        font-size:1rem;
-    }
-
-    #header button{
-        width:220px;
-    }
-
-    #content{
-        width:92%;
-        padding:25px;
-    }
-
-    .algo-card{
-        height:140px;
-    }
-
-    .algo-card h3{
-        font-size:1.5rem;
-    }
-}
