@@ -1,34 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algo Slides</title>
-
-    <link rel="stylesheet" href="../static/css/slide-show-style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ algo_label }} — Algo Slides</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/slide-show-style.css') }}">
 </head>
 <body>
 
-<div class="container">
+  <a class="back-link" href="{{ url_for('index') }}">← new search</a>
 
-    <h1>Binary Search</h1>
+  <main class="stage">
+    <header class="stage__header">
+      <span class="stage__eyebrow">tracing —</span>
+      <h1 class="stage__title">{{ algo_label }}</h1>
+      <p class="stage__meta">
+        {% if target is not none %}target <strong>{{ target }}</strong> in {% endif %}
+        <span class="mono">[{{ array|join(', ') }}]</span>
+      </p>
+    </header>
 
-    <div class="content">
+    <div class="card-stack">
+      <div class="card-stack__peek card-stack__peek--far"></div>
+      <div class="card-stack__peek card-stack__peek--near"></div>
 
-        <h2>Algorithm</h2>
+      <section class="card" id="card">
+        <div class="card__tab">
+          <span id="stepCounter">STEP 1 / {{ steps|length }}</span>
+        </div>
 
-        <p>
-            algorithm explanation
-        </p>
+        <div class="array-row" id="arrayRow"></div>
+        <div class="pointer-row" id="pointerRow"></div>
+        <div class="info-row" id="infoRow"></div>
 
+        <p class="card__explain-label">Why this step</p>
+        <p class="card__message" id="stepMessage"></p>
+
+        <div class="card__status" id="stepStatus"></div>
+      </section>
     </div>
 
     <div class="controls">
-        <button id="previous">← Previous</button>
-        <button id="next">Next →</button>
+      <button class="controls__btn" id="prevBtn" aria-label="Previous step">← prev</button>
+      <div class="controls__ticks" id="ticks"></div>
+      <button class="controls__btn" id="nextBtn" aria-label="Next step">next →</button>
     </div>
 
-</div>
+    <div class="legend" id="legend"></div>
+  </main>
 
+  <script>
+    window.__ALGO__ = "{{ algo_key }}";
+    window.__ARRAY__ = "{{ array|tojson }}";
+    window.__STEPS__ = "{{ steps_json | safe }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/slides.js') }}"></script>
 </body>
 </html>
