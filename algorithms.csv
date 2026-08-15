@@ -1,0 +1,21 @@
+key,label,category,input,needs_sorted
+linear,Linear Search,searching,array_target,false
+binary,Binary Search,searching,array_target,true
+jump,Jump Search,searching,array_target,true
+interpolation,Interpolation Search,searching,array_target,true
+ternary,Ternary Search,searching,array_target,true
+bubble,Bubble Sort,sorting,array,false
+selection,Selection Sort,sorting,array,false
+insertion,Insertion Sort,sorting,array,false
+merge,Merge Sort,sorting,array,false
+quick,Quick Sort,sorting,array,false
+heap,Heap Sort,sorting,array,false
+shell,Shell Sort,sorting,array,false
+cocktail,Cocktail Shaker Sort,sorting,array,false
+kadane,Kadane's Max Subarray,array,array,false
+two_sum,Two Sum (Two-Pointer),array,array_target,true
+sieve,Sieve of Eratosthenes,array,n,false
+reverse,Reverse Array,array,array,false
+find_max,Find Maximum,array,array,false
+find_min,Find Minimum,array,array,false
+dutch_flag,Dutch National Flag,array,array_target,false
