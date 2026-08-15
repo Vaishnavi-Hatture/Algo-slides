@@ -1,49 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../static/css/index-style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algo Slides — pick an algorithm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index-style.css') }}">
 </head>
 <body>
-    <div id="header">
-    <h2>Algo-Slide</h2>
-    <p>
-        An interactive webpage displaying slideshows to efficiently revise various
-        algorithms An interactive webpage displaying slideshows to efficiently revise
-        various algorithms
-    </p>
-    <button href="#content"><a href="#content">Get Started</a></button>
-</div>
 
- <div id="content">
+  <main class="box">
+    <header class="box__header">
+      <span class="box__eyebrow">a card catalog of —</span>
+      <h1 class="box__title">Algo Slides</h1>
+      <p class="box__sub">Pick an algorithm, feed it some numbers, and step through
+      its execution one card at a time — with a plain-English explanation on every card.</p>
+    </header>
 
-    <div class="algo-card">
-        <h3>Linear Search</h3>
-    </div>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="flash-error">
+        {% for m in messages %}<p>{{ m }}</p>{% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
 
-    <div class="algo-card">
-       <h3>Binary Search</h3>
-    </div>
-    <div class="algo-card">
-        <h3>Quick sort</h3>
-    </div>
+    <form class="deck" action="{{ url_for('show_slides') }}" method="post" id="algoForm">
 
-    <div class="algo-card">
-        <h3>Bubble sort</h3>
-    </div>
-    <div class="algo-card">
-        <h3>Selection Sort </h3>
-    </div>
+      <fieldset class="deck__field deck__field--tabs">
+        <legend>01 — Choose the algorithm</legend>
 
-    <div class="algo-card">
-        <h3>Insertion sort</h3>
-    </div>
+        {% for cat_key, cat_label in categories.items() %}
+          {% if groups[cat_key] %}
+          <p class="group-label">{{ cat_label }}</p>
+          <div class="tabs">
+            {% for key, algo in groups[cat_key] %}
+            <label class="tab">
+              <input type="radio" name="algorithm" value="{{ key }}"
+                     data-input="{{ algo.input }}"
+                     data-needs-sorted="{{ 'true' if algo.needs_sorted else 'false' }}"
+                     {% if cat_key == categories.keys()|list|first and loop.first %}checked{% endif %}>
+              <span class="tab__label">{{ algo.label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endfor %}
+      </fieldset>
 
-</div>
-    
+      <fieldset class="deck__field" id="fieldArray">
+        <legend>02 — Enter the array</legend>
+        <label class="card-input">
+          <span class="card-input__hint">comma-separated integers</span>
+          <input type="text" name="array" id="arrayInput" placeholder="4, 12, 1, 9, 23, 7, 18">
+        </label>
+        <p class="note" id="sortNote">This algorithm needs a sorted array — yours will be sorted automatically before it runs.</p>
+      </fieldset>
 
+      <fieldset class="deck__field" id="fieldTarget">
+        <legend id="targetLegend">03 — Enter the target</legend>
+        <label class="card-input card-input--narrow">
+          <span class="card-input__hint" id="targetHint">value to find</span>
+          <input type="text" name="target" id="targetInput" placeholder="9">
+        </label>
+      </fieldset>
 
+      <fieldset class="deck__field" id="fieldN">
+        <legend>02 — Enter the limit</legend>
+        <label class="card-input card-input--narrow">
+          <span class="card-input__hint">find all primes up to n</span>
+          <input type="text" name="n" id="nInput" placeholder="30">
+        </label>
+      </fieldset>
+
+      <button class="deck__submit" type="submit">
+        <span>Deal the cards</span>
+        <span class="deck__submit-arrow">→</span>
+      </button>
+    </form>
+  </main>
+
+  <script>
+    const radios = document.querySelectorAll('input[name="algorithm"]');
+    const fieldArray = document.getElementById('fieldArray');
+    const fieldTarget = document.getElementById('fieldTarget');
+    const fieldN = document.getElementById('fieldN');
+    const arrayInput = document.getElementById('arrayInput');
+    const targetInput = document.getElementById('targetInput');
+    const nInput = document.getElementById('nInput');
+    const sortNote = document.getElementById('sortNote');
+    const targetLegend = document.getElementById('targetLegend');
+    const targetHint = document.getElementById('targetHint');
+
+    function needsSorted(radio) {
+      // pulled from the algorithm's row in algorithms.csv via data-input plus
+      // a lookup the server rendered inline on each option's title attribute
+      return radio.dataset.needsSorted === 'true';
+    }
+
+    function sync() {
+      const checked = document.querySelector('input[name="algorithm"]:checked');
+      const inputType = checked ? checked.dataset.input : 'array_target';
+
+      fieldArray.style.display = inputType === 'n' ? 'none' : '';
+      fieldTarget.style.display = inputType === 'array_target' ? '' : 'none';
+      fieldN.style.display = inputType === 'n' ? '' : 'none';
+
+      // no client-side `required` flags here on purpose — a required attribute
+      // on a field that's hidden (display:none) makes some browsers silently
+      // refuse to submit the form with no visible feedback. Validation happens
+      // server-side instead, and any problem is shown as a flash message above.
+
+      if (checked && checked.value === 'dutch_flag') {
+        targetLegend.textContent = '03 — Enter the pivot value';
+        targetHint.textContent = 'partition around this value';
+      } else {
+        targetLegend.textContent = '03 — Enter the target';
+        targetHint.textContent = 'value to find';
+      }
+
+      sortNote.style.display = checked && checked.dataset.needsSorted === 'true' ? '' : 'none';
+    }
+
+    radios.forEach(r => r.addEventListener('change', sync));
+    sync();
+  </script>
 </body>
 </html>
